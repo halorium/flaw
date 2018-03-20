@@ -16,7 +16,34 @@ This allows for detailed error message output in JSON formatted logs like
 Loggly and many others.
 
 ### Usage
+```
+go get github.com/halorium/flaw
+```
 
+```
+package main
+
+import "github.com/halorium/flaw"
+
+func main() {
+	flawError := MyFunc()
+
+	if flawError != nil {
+		// custom logger writes JSON
+		myLogger.Log(flawError)
+	}
+}
+
+func MyFunc() flaw.Flaw {
+	err := ExternalCall()
+
+	if err != nil {
+		return flaw.From(err).Wrap("cannot perform external call")
+	}
+
+	return nil
+}
+```
 
 #### Credits
 This is a refactor from code designed and written by Tom Mornini and Loren Hale
