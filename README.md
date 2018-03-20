@@ -130,4 +130,4 @@ func ExternalCall2() error {
 ```
 
 #### Credits
-This is a refactor from code designed and written by Tom Mornini and Loren Hale
+This is a refactor from code designed and written by @tmornini and @halorium
