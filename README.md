@@ -23,25 +23,109 @@ go get github.com/halorium/flaw
 ```
 package main
 
-import "github.com/halorium/flaw"
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+
+	"github.com/halorium/flaw"
+)
 
 func main() {
-	flawError := MyFunc()
+	flawError := MyFunc1()
 
 	if flawError != nil {
-		// custom logger writes JSON
-		myLogger.Log(flawError)
+		fmt.Println(flawError)
+		// original error from external call 2
+
+		fmt.Println(flawError.String())
+		// message trace
+		// -----------
+		// cannot perform MyFunc1 (main.go:34)
+		// cannot perform MyFunc2 (main.go:46)
+		// original error from external call 2 (main.go:46)
+		//
+		// stack trace
+		// -----------
+		// main.go:46
+		// main.go:30
+		// main.go:11
+
+		data, _ := json.Marshal(flawError)
+		fmt.Println(string(data))
+		// {
+		//   "message-trace": [
+		//     {
+		//       "message": "cannot perform MyFunc1",
+		//       "pathname": "main.go",
+		//       "line": 50
+		//     },
+		//     {
+		//       "message": "cannot perform MyFunc2",
+		//       "pathname": "main.go",
+		//       "line": 62
+		//     },
+		//     {
+		//       "message": "original error from external call 2",
+		//       "pathname": "main.go",
+		//       "line": 62
+		//     }
+		//   ],
+		//   "stack-trace": [
+		//     {
+		//       "pathname": "main.go",
+		//       "line": 62
+		//     },
+		//     {
+		//       "pathname": "main.go",
+		//       "line": 46
+		//     },
+		//     {
+		//       "pathname": "main.go",
+		//       "line": 12
+		//     }
+		//   ]
+		// }
 	}
 }
 
-func MyFunc() flaw.Flaw {
-	err := ExternalCall()
+func MyFunc1() flaw.Flaw {
+	err := ExternalCall1()
 
 	if err != nil {
-		return flaw.From(err).Wrap("cannot perform external call")
+		// create a flaw Error from a standard error
+		// wrap flaw with additional information
+		return flaw.From(err).Wrap("cannot perform ExternalCall1")
+	}
+
+	flawError := MyFunc2()
+
+	if flawError != nil {
+		// wrap flaw with additional information
+		return flawError.Wrap("cannot perform MyFunc1")
 	}
 
 	return nil
+}
+
+func MyFunc2() flaw.Flaw {
+	err := ExternalCall2()
+
+	if err != nil {
+		// create a flaw Error from a standard error
+		// wrap flaw with additional information
+		return flaw.From(err).Wrap("cannot perform MyFunc2")
+	}
+
+	return nil
+}
+
+func ExternalCall1() error {
+	return nil
+}
+
+func ExternalCall2() error {
+	return errors.New("original error from external call 2")
 }
 ```
 

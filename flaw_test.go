@@ -21,7 +21,7 @@ func TestFlaw(t *testing.T) {
 	// implements Wrap function
 	flawError = flawError.Wrap("second message")
 	// implements fmt.Stringer interface
-	expected = "message trace\n-----------\nsecond message (flaw_test.go:22)\nsome error (new.go:5)\n\nstack trace\n-----------"
+	expected = "message trace\n-----------\nsecond message (flaw_test.go:22)\nsome error (flaw_test.go:12)\n\nstack trace\n-----------"
 	equals(
 		t,
 		expected,
@@ -29,7 +29,7 @@ func TestFlaw(t *testing.T) {
 	)
 
 	// implements json.Marshaler interface
-	expected = "{\"message-trace\":[{\"message\":\"second message\",\"pathname\":\"flaw_test.go\",\"line\":22},{\"message\":\"some error\",\"pathname\":\"new.go\",\"line\":5}],\"stack-trace\":[]}"
+	expected = "{\"message-trace\":[{\"message\":\"second message\",\"pathname\":\"flaw_test.go\",\"line\":22},{\"message\":\"some error\",\"pathname\":\"flaw_test.go\",\"line\":12}],\"stack-trace\":[]}"
 
 	sliceBytes, err := json.Marshal(flawError)
 

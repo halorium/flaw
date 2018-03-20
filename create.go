@@ -1,6 +1,7 @@
 package flaw
 
 import (
+	"path"
 	"runtime"
 	"strings"
 )
@@ -8,29 +9,29 @@ import (
 // create is used by New and From to return a flaw Error
 // set the first message trace and stack trace
 func create(message string) *flawError {
-	return &flawError{
-		messageTrace: getMessageFrames(message),
-		stackTrace:   getStackFrames(),
-	}
-}
-
-func getMessageFrames(message string) []frame {
 	_, pathname, line, ok := runtime.Caller(2)
+
+	repoRoot := path.Dir(pathname)
 
 	if !ok {
 		panic("not ok")
 	}
 
-	return []frame{
+	messageTrace := []frame{
 		{
 			Message:  message,
-			Pathname: stripPathname(pathname),
+			Pathname: stripPathname(pathname, repoRoot),
 			Line:     line,
 		},
 	}
+
+	return &flawError{
+		messageTrace: messageTrace,
+		stackTrace:   getStackFrames(repoRoot),
+	}
 }
 
-func getStackFrames() []frame {
+func getStackFrames(repoRoot string) []frame {
 	frames := []frame{}
 
 	atTop := true
@@ -50,7 +51,7 @@ func getStackFrames() []frame {
 		atTop = false
 
 		stackFrame := frame{
-			Pathname: stripPathname(pathname),
+			Pathname: stripPathname(pathname, repoRoot),
 			Line:     line,
 		}
 

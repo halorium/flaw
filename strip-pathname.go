@@ -1,11 +1,14 @@
 package flaw
 
-import "regexp"
+import (
+	"regexp"
+)
 
 // stripPathname shortens the path to everything after the repository root
 // for simplicity purposes
-func stripPathname(pathname string) string {
-	rgx := regexp.MustCompile(REPO_ROOT + "/(.+)")
+func stripPathname(pathname string, repoRoot string) string {
+
+	rgx := regexp.MustCompile(repoRoot + "/(.+)")
 
 	pathMatches := rgx.FindAllStringSubmatch(pathname, -1)
 

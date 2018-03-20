@@ -3,7 +3,6 @@ package flaw
 import (
 	"encoding/json"
 	"fmt"
-	"runtime"
 	"strings"
 )
 
@@ -24,19 +23,9 @@ func (err *flawError) Error() string {
 // This can be thought of like wrapping errors with layers as they bubble up
 // This is part of the flaw interface.
 func (err *flawError) Wrap(message string) Flaw {
-	_, pathname, line, ok := runtime.Caller(1)
+	fe := create(message)
 
-	if !ok {
-		panic("not ok")
-	}
-
-	messageFrame := frame{
-		Message:  message,
-		Pathname: stripPathname(pathname),
-		Line:     line,
-	}
-
-	err.messageTrace = append([]frame{messageFrame}, err.messageTrace...)
+	err.messageTrace = append(fe.messageTrace, err.messageTrace...)
 
 	return err
 }
