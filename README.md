@@ -1,13 +1,13 @@
-## Flaw is a Go(lang) custom error package
+## flaw is a Go(lang) custom error package
 
 ### Features
 This was created because sometimes you need a little more information than what
 the builtin error interface can provide.
 
-Flaw allows you to "Wrap" your errors as they bubble up adding a message trace
+A flaw.Error allows you to "Wrap" your errors as they bubble up adding a message trace
 as well as a stack trace to your errors.
 
-The Flaw interface implements the following interfaces:
+The flaw.Error interface implements the following interfaces:
 * builtin error interface
 * fmt.Stringer interface
 * json.Marshaler interface
@@ -89,7 +89,7 @@ func main() {
 	}
 }
 
-func MyFunc1() flaw.Flaw {
+func MyFunc1() flaw.Error {
 	err := ExternalCall1()
 
 	if err != nil {
@@ -108,7 +108,7 @@ func MyFunc1() flaw.Flaw {
 	return nil
 }
 
-func MyFunc2() flaw.Flaw {
+func MyFunc2() flaw.Error {
 	err := ExternalCall2()
 
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 
 // create is used by New and From to return a flaw Error
 // set the first message trace and stack trace
-func create(message string) *flawError {
+func create(message string) *flaw {
 	_, pathname, line, ok := runtime.Caller(2)
 
 	repoRoot := path.Dir(pathname)
@@ -25,7 +25,7 @@ func create(message string) *flawError {
 		},
 	}
 
-	return &flawError{
+	return &flaw{
 		messageTrace: messageTrace,
 		stackTrace:   getStackFrames(repoRoot),
 	}

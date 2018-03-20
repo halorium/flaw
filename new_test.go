@@ -14,8 +14,8 @@ func TestNew(t *testing.T) {
 
 	equals(
 		t,
+		"*flaw.flaw",
 		fmt.Sprintf("%T", err),
-		"*flaw.flawError",
 	)
 
 	equals(
